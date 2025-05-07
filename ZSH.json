@@ -1,0 +1,95 @@
+{
+    "@context": ["https://www.w3.org/2022/wot/td/v1.1"],
+    "@type": "tm:ThingModel",
+    "title": "Zone Sensor Hub (ZSH)",
+    "properties": {
+        "occupancyCount": {
+            "description": "Current occupancy count in the zone",
+            "type": "integer",
+            "readOnly": true
+        },
+        "dwellTime": {
+            "description": "Average time (in minutes) that occupants have spent in the zone",
+            "type": "number",
+            "unit": "min",
+            "readOnly": true
+        },
+        "temperature": {
+            "description": "Ambient temperature in Celsius",
+            "type": "number",
+            "unit": "Cel",
+            "readOnly": true
+        },
+        "humidity": {
+            "description": "Relative humidity in percentage",
+            "type": "number",
+            "unit": "%",
+            "minimum": 0,
+            "maximum": 100,
+            "readOnly": true
+        },
+        "airQuality": {
+            "description": "Air quality metrics",
+            "type": "object",
+            "properties": {
+                "co2Level": {
+                    "description": "CO2 level in ppm",
+                    "type": "integer",
+                    "unit": "ppm",
+                    "readOnly": true
+                },
+                "pm25Level": {
+                    "description": "PM2.5 particulate matter in µg/m³",
+                    "type": "number",
+                    "unit": "µg/m³",
+                    "readOnly": true
+                }
+            },
+            "readOnly": true
+        },
+        "lastDataTimestamp": {
+            "description": "Timestamp of the last data sent from the ZSH",
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+        },
+        "deviceStatus": {
+            "description": "Operational status of the ZSH (e.g., online, offline, error)",
+            "type": "string",
+            "enum": ["online", "offline", "error", "calibrating"],
+            "readOnly": true
+        }
+    },
+    "actions": {
+        "reboot": {
+            "description": "Triggers a reboot of the ZSH"
+        }, 
+        "calibrate": {
+            "description": "Initiates calibration of the sensors"
+        }
+    },
+    "events": {
+        "newDataAvailable": {
+            "description": "Emitted when a new set of sensor readings is processed",
+            "data": {
+                "type": "object",
+                "properties": {
+                    "occupancy": {"type": "integer"},
+                    "temp": {"type": "number"},
+                    "hum": {"type": "number"},
+                    "aqi_co2": {"type": "integer"}
+                }
+            }
+        },
+        "highOccupancyAlert": {
+            "description": "Emitted if occupancy exceeds a predefined threshold",
+            "data": {
+                "type": "object",
+                "properties": {
+                    "currentOccupancy": {"type": "integer"},
+                    "threshold": {"type": "integer"}
+                }
+            }
+        }
+    }
+}
