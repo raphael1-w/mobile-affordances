@@ -1,0 +1,79 @@
+{
+    "@context": ["https://www.w3.org/2022/wot/td/v1.1"],
+    "@type": "tm:ThingModel",
+    "title": "Environmental Control Interface (ECI)",
+    "properties": {
+        "availableControls": {
+            "description": "Indicates which environmental systems are connected and controllable",
+            "type": "object",
+            "properties": {
+                "hvac": {"type": "boolean", "readOnly": true},
+                "fanSystem": {"type": "boolean", "readOnly": true},
+                "airPurifier": {"type": "boolean", "readOnly": true}
+            },
+            "readOnly": true
+        },
+        "hvacSystemMode": {
+            "description": "Current operational mode of the connected HVAC (if available)",
+            "type": "string",
+            "enum": ["auto", "cool", "heat", "fan_only", "off", "unavailable"],
+            "readOnly": true
+        },
+        "targetTemperatureSetpoint": {
+            "description": "Current target temperature setting for HVAC in Celsius (if available)",
+            "type": "number",
+            "unit": "Cel",
+            "readOnly": true
+        },
+        "deviceStatus": {
+            "description": "Operational status of the ECI itself",
+            "type": "string",
+            "readOnly": true
+        }
+    },
+    "actions": {
+        "setTargetTemperature": {
+            "description": "Adjusts the HVAC target temperature setpoint (if HVAC available)",
+            "input": {
+                "type": "object",
+                "properties": {
+                    "temperature": {"type": "number", "unit": "Cel"}
+                },
+                "required": ["temperature"]
+            }
+        },
+        "setHvacMode": {
+            "description": "Sets the HVAC operational mode (if HVAC available)",
+            "input": {
+                "type": "object",
+                "properties": {
+                    "mode": {"type": "string", "enum": ["auto", "cool", "heat", "fan_only", "off"]}
+                },
+                "required": ["mode"]
+            }
+        }
+    },
+    "events": {
+        "bmsStateChanged": {
+            "description": "Emitted if the connected BMS/HVAC state changes",
+            "data": {
+                "type": "object",
+                "properties": {
+                    "changedProperty": {"type": "string"},
+                    "newValue": {"type": "string"} 
+                }
+            }
+        },
+        "commandAcknowledgement": {
+            "description": "Emitted after an action is attempted, indicating success or failure",
+            "data": {
+                "type": "object",
+                "properties": {
+                    "actionName": {"type": "string"},
+                    "status": {"type": "string", "enum": ["success", "failure"]},
+                    "message": {"type": "string"}
+                }
+            }
+        }
+    }
+}

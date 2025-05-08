@@ -1,0 +1,84 @@
+{
+    "@context": ["https://www.w3.org/2022/wot/td/v1.1"],
+    "@type": "tm:ThingModel",
+    "title": "IoT Gateway",
+    "properties": {
+        "capConnectionStatus": {
+            "description": "Status of the connection to the Cloud Analytics Platform",
+            "type": "string",
+            "enum": ["connected", "disconnected", "buffering_data", "error"],
+            "readOnly": true
+        },
+        "systemHealth": {
+            "description": "Basic health metrics of the gateway",
+            "type": "object",
+            "properties": {
+                "cpuLoad": {"type": "number", "unit": "%", "readOnly": true},
+                "memoryUsage": {"type": "number", "unit": "%", "readOnly": true}
+            },
+            "readOnly": true
+        },
+        "connectedZshList": {
+            "description": "List of connected ZSH devices",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "count": {"type": "integer", "readOnly": true},
+                    "deviceId": {"type": "string"},
+                    "deviceType": {"type": "string", "enum": ["ZSH", "ECI"]}
+                }
+            },
+            "readOnly": true
+        },
+        "lastCAPSync": {
+            "description": "Timestamp of the last successful synchronization with CAP",
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+        }, 
+        "softwareVersion": {
+            "description": "Current firmware/software version of the gateway",
+            "type": "string",
+            "readOnly": true
+        }
+        
+    },
+    "actions": {
+        "reboot": {
+            "description": "Triggers a reboot of the IoT Gateway"
+        },
+        "forceCapSync": {
+            "description": "Manually triggers an attempt to synchronize all buffered data with CAP"
+        }, 
+        "discoverLocalDevices": {
+            "description": "Initiates a discovery process for local devices (e.g., ZSH)"
+        }
+    },
+    "events": {
+        "capConnectionStatusChanged": {
+            "description": "Emitted when the connection status to CAP changes",
+            "data": {"type": "string"}
+        },
+        "localDeviceConnected": {
+            "description": "Emitted when a new local device (e.g., ZSH) connects",
+            "data": {
+                "type": "object",
+                "properties": {
+                    "deviceId": {"type": "string"},
+                    "deviceType": {"type": "string", "enum": ["ZSH", "ECI"]}
+                }
+            }
+        }, 
+        "localDeviceStatusChanged": {
+            "description": "Emitted when the status of a connected local device changes",
+            "data": {
+                "type": "object",
+                "properties": {
+                    "deviceId": {"type": "string"},
+                    "status": {"type": "string"}
+                }
+            }
+        }
+    }
+}
